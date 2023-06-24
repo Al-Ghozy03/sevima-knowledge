@@ -8,6 +8,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sevima_knowledge/screens/materi.dart';
+import 'package:sevima_knowledge/screens/quiz.dart';
 
 class Detail extends StatefulWidget {
   String thumbnail;
@@ -103,7 +104,8 @@ class _DetailState extends State<Detail> {
 
   Widget _list(String title, String img) => TextButton(
         onPressed: () {
-          Get.to(() => Materi(courseName: "Web Programmer",materiName: title), transition: Transition.rightToLeftWithFade);
+          Get.to(() => Quiz(courseName: "Web Programmer",materiName: title), transition: Transition.rightToLeftWithFade);
+          // Get.to(() => Materi(courseName: "Web Programmer",materiName: title), transition: Transition.rightToLeftWithFade);
         },
         child: Row(
           children: [

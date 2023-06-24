@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sevima_knowledge/colors.dart';
+import 'package:sevima_knowledge/screens/chat.dart';
 
 class Materi extends StatefulWidget {
   String courseName;
@@ -19,7 +20,9 @@ class _MateriState extends State<Materi> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Get.to(() => Chat(), transition: Transition.rightToLeftWithFade);
+        },
         backgroundColor: blueTheme,
         child: Icon(Iconsax.messages),
       ),
