@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Sevima Knowledge',
       theme: ThemeData(fontFamily: "Montserrat"),
       debugShowCheckedModeBanner: false,
-      home: Navbar(),
+      home: Login(),
     );
   }
 }

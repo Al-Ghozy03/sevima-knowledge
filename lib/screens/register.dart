@@ -17,6 +17,9 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
+    TextEditingController email = TextEditingController();
+    TextEditingController name = TextEditingController();
+    TextEditingController password = TextEditingController();
     final width = Get.width;
     return Scaffold(
       body: SafeArea(
@@ -26,7 +29,8 @@ class _RegisterState extends State<Register> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              IconButton(onPressed: ()=>Get.back(), icon: Icon(Iconsax.arrow_left)),
+              IconButton(
+                  onPressed: () => Get.back(), icon: Icon(Iconsax.arrow_left)),
               SizedBox(height: 20),
               Center(
                 child: Column(
@@ -49,25 +53,29 @@ class _RegisterState extends State<Register> {
                 label: "Email",
                 hintText: "john@gmail.com",
                 textInputType: TextInputType.emailAddress,
+                controller: email,
               ),
               SizedBox(height: 13),
               Input(
                 label: "Name",
                 hintText: "John",
                 textInputType: TextInputType.text,
+                controller: name,
               ),
               SizedBox(height: 13),
               Input(
                 label: "Password",
                 hintText: "Min. 8 characters",
                 textInputType: TextInputType.text,
+                controller: password,
               ),
               SizedBox(height: 15),
               Container(
                 width: width,
                 child: ElevatedButton(
                     onPressed: () {
-                      Get.to(()=>Interest(),transition: Transition.rightToLeftWithFade);
+                      Get.to(() => Interest(),
+                          transition: Transition.rightToLeftWithFade);
                     },
                     style: ElevatedButton.styleFrom(
                         primary: blueTheme,

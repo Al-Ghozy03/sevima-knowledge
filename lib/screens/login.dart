@@ -1,7 +1,10 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, deprecated_member_use, sized_box_for_whitespace
+import 'dart:convert';
 
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sevima_knowledge/api_service.dart';
 import 'package:sevima_knowledge/colors.dart';
 import 'package:sevima_knowledge/screens/register.dart';
 import 'package:sevima_knowledge/widgets/input.dart';
@@ -14,6 +17,34 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+
+  bool isLoading = false;
+  Future login() async {
+    setState(() {
+      isLoading = true;
+    });
+    final url = Uri.parse("$baseUrl/user/login");
+    final res = await http.post(
+      url,
+      body: jsonEncode({"email": email.text, "password": password.text}),
+      headers: {"Content-Type": "application/json"},
+    );
+    print(res.statusCode);
+    if (res.statusCode == 200) {
+    setState(() {
+      isLoading = false;
+    });
+      print(res.body);
+    } else {
+      print(res.body);
+    setState(() {
+      isLoading = false;
+    });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = Get.width;
@@ -47,12 +78,14 @@ class _LoginState extends State<Login> {
                 label: "Email",
                 hintText: "john@gmail.com",
                 textInputType: TextInputType.emailAddress,
+                controller: email,
               ),
               SizedBox(height: 13),
               Input(
                 label: "Password",
                 hintText: "Min. 8 characters",
                 textInputType: TextInputType.text,
+                controller: password,
               ),
               Align(
                 alignment: Alignment.centerRight,
@@ -66,7 +99,9 @@ class _LoginState extends State<Login> {
               Container(
                 width: width,
                 child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      login();
+                    },
                     style: ElevatedButton.styleFrom(
                         primary: blueTheme,
                         elevation: 0,

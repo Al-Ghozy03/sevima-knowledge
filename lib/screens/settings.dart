@@ -14,6 +14,9 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  TextEditingController email = TextEditingController();
+  TextEditingController name = TextEditingController();
+  TextEditingController password = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,19 +50,25 @@ class _SettingsState extends State<Settings> {
               ),
               SizedBox(height: 13),
               Input(
-                  label: "Email",
-                  hintText: "John@gmail.com",
-                  textInputType: TextInputType.emailAddress),
+                label: "Email",
+                hintText: "John@gmail.com",
+                textInputType: TextInputType.emailAddress,
+                controller: email,
+              ),
               SizedBox(height: 13),
               Input(
-                  label: "Name",
-                  hintText: "John",
-                  textInputType: TextInputType.text),
+                label: "Name",
+                hintText: "John",
+                textInputType: TextInputType.text,
+                controller: name,
+              ),
               SizedBox(height: 13),
               Input(
-                  label: "Password",
-                  hintText: "Min. 8 characters",
-                  textInputType: TextInputType.text),
+                label: "Password",
+                hintText: "Min. 8 characters",
+                textInputType: TextInputType.text,
+                controller: password,
+              ),
               SizedBox(height: 13),
               Container(
                 width: Get.width,

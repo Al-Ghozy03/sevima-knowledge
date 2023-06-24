@@ -7,10 +7,12 @@ class Input extends StatelessWidget {
   String label;
   String hintText;
   TextInputType textInputType;
+  TextEditingController controller;
   Input(
       {required this.label,
       required this.hintText,
-      required this.textInputType});
+      required this.textInputType,
+      required this.controller});
   @override
   Widget build(BuildContext context) {
     final width = Get.width;
@@ -23,7 +25,8 @@ class Input extends StatelessWidget {
         ),
         SizedBox(height: 6),
         TextField(
-          obscureText: label.toLowerCase() == "password"?true:false,
+          controller: controller,
+          obscureText: label.toLowerCase() == "password" ? true : false,
           decoration: InputDecoration(
               hintText: hintText,
               contentPadding: EdgeInsets.symmetric(horizontal: width / 30),
