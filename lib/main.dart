@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sevima_knowledge/screens/login.dart';
+import 'package:sevima_knowledge/widgets/navbar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Sevima Knowledge',
       theme: ThemeData(fontFamily: "Montserrat"),
       debugShowCheckedModeBanner: false,
-      home: Login(),
+      home: Navbar(),
     );
   }
 }
