@@ -1,9 +1,14 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, deprecated_member_use
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, deprecated_member_use, curly_braces_in_flow_control_structures, sized_box_for_whitespace
+
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sevima_knowledge/api_service.dart';
 import 'package:sevima_knowledge/colors.dart';
+import 'package:sevima_knowledge/models/category_model.dart';
 import 'package:sevima_knowledge/screens/dashboard.dart';
+import 'package:http/http.dart' as http;
 
 class Interest extends StatefulWidget {
   const Interest({super.key});
@@ -13,6 +18,37 @@ class Interest extends StatefulWidget {
 }
 
 class _InterestState extends State<Interest> {
+  late Future getCategory;
+  List selected = [];
+  bool isLoading = false;
+  Future submit() async {
+    setState(() {
+      isLoading = true;
+    });
+    Uri url = Uri.parse("$baseUrl/interest/bulk-create");
+    final res =
+        await http.post(url, body: jsonEncode({"data": selected}), headers: {
+      "Authorization": "Bearer ${storage.read("token")}",
+      "Content-Type":"application/json"
+    });
+    if (res.statusCode == 200) {
+      setState(() {
+        isLoading = false;
+      });
+      Get.off(() => Dashboard(), transition: Transition.rightToLeftWithFade);
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      print(res.body);
+    }
+  }
+  @override
+  void initState() {
+    getCategory = ApiService.getCategory();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = Get.width;
@@ -29,33 +65,22 @@ class _InterestState extends State<Interest> {
                 style: TextStyle(fontFamily: "montserrat semi", fontSize: 20),
               ),
               SizedBox(height: 15),
-              Wrap(
-                children: [
-                  _item("Programming"),
-                  SizedBox(width: 10),
-                  _item("Design"),
-                  SizedBox(width: 10),
-                  _item("Data"),
-                  SizedBox(width: 10),
-                  _item("Art"),
-                  SizedBox(width: 10),
-                  _item("Web"),
-                  SizedBox(width: 10),
-                  _item("AI"),
-                  SizedBox(width: 10),
-                  _item("Office"),
-                  SizedBox(width: 10),
-                  _item("History"),
-                  SizedBox(width: 10),
-                ],
+              FutureBuilder(
+                builder: (_, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done)
+                    return CircularProgressIndicator();
+                  if (snapshot.hasError) return Text("Something went wrong");
+                  if (snapshot.hasData) return _list(snapshot.data, selected);
+                  return Text("Empty");
+                },
+                future: getCategory,
               ),
               SizedBox(height: 10),
               Container(
                 width: width,
                 child: ElevatedButton(
                     onPressed: () {
-                      Get.to(() => Dashboard(),
-                          transition: Transition.rightToLeftWithFade);
+                      submit();
                     },
                     style: ElevatedButton.styleFrom(
                         primary: blueTheme,
@@ -63,11 +88,13 @@ class _InterestState extends State<Interest> {
                         padding: EdgeInsets.symmetric(vertical: 13),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
-                    child: Text(
-                      "Done",
-                      style: TextStyle(
-                          fontFamily: "montserrat semi", fontSize: 15),
-                    )),
+                    child: isLoading
+                        ? CircularProgressIndicator(color: Colors.white)
+                        : Text(
+                            "Done",
+                            style: TextStyle(
+                                fontFamily: "montserrat semi", fontSize: 15),
+                          )),
               ),
             ],
           ),
@@ -76,18 +103,43 @@ class _InterestState extends State<Interest> {
     );
   }
 
-  Widget _item(String title) {
-    return ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-            elevation: 0,
-            primary: blueThemeOpacity,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(100))),
-        child: Text(
-          title,
-          style:
-              TextStyle(color: Colors.black, fontFamily: "montserrat medium"),
-        ));
+  Widget _list(CategoryModel data, List selected) {
+    return Wrap(
+      children: data.data.map((e) => _item(e.name, e.id, selected)).toList(),
+    );
+  }
+
+  Widget _item(String title, int id, List selected) {
+    return Container(
+      margin: EdgeInsets.only(right: 6),
+      child: ElevatedButton(
+          onPressed: () {
+            setState(() {
+              if (selected
+                  .where((element) => element["id_category"] == id)
+                  .toList()
+                  .isNotEmpty) {
+                selected.removeWhere((element) => element["id_category"] == id);
+              } else {
+                selected.add({"id_category": id});
+              }
+            });
+          },
+          style: ElevatedButton.styleFrom(
+              elevation: 0,
+              primary: selected
+                      .where((element) => element["id_category"] == id)
+                      .toList()
+                      .isNotEmpty
+                  ? blueTheme.withOpacity(0.4)
+                  : blueThemeOpacity,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100))),
+          child: Text(
+            title,
+            style:
+                TextStyle(color: Colors.black, fontFamily: "montserrat medium"),
+          )),
+    );
   }
 }

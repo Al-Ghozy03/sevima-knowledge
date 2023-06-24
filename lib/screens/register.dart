@@ -1,11 +1,16 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, deprecated_member_use, sized_box_for_whitespace
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:sevima_knowledge/api_service.dart';
 import 'package:sevima_knowledge/colors.dart';
 import 'package:sevima_knowledge/screens/interest.dart';
 import 'package:sevima_knowledge/widgets/input.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:http/http.dart' as http;
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -15,11 +20,40 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  TextEditingController email = TextEditingController();
+  TextEditingController name = TextEditingController();
+  TextEditingController password = TextEditingController();
+  final storage = GetStorage();
+  bool isLoading = false;
+  Future register() async {
+    setState(() {
+      isLoading = true;
+    });
+    final url = Uri.parse("$baseUrl/user/register");
+    final res = await http.post(
+      url,
+      body: jsonEncode({
+        "email": email.text,
+        "password": password.text,
+        "name": name.text,
+      }),
+      headers: {"Content-Type": "application/json"},
+    );
+    if (res.statusCode == 200) {
+      setState(() {
+        isLoading = false;
+      });
+      storage.write("token", jsonDecode(res.body)["token"]);
+      Get.off(() => Interest(), transition: Transition.rightToLeftWithFade);
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController email = TextEditingController();
-    TextEditingController name = TextEditingController();
-    TextEditingController password = TextEditingController();
     final width = Get.width;
     return Scaffold(
       body: SafeArea(
@@ -74,8 +108,7 @@ class _RegisterState extends State<Register> {
                 width: width,
                 child: ElevatedButton(
                     onPressed: () {
-                      Get.to(() => Interest(),
-                          transition: Transition.rightToLeftWithFade);
+                      register();
                     },
                     style: ElevatedButton.styleFrom(
                         primary: blueTheme,
@@ -83,11 +116,13 @@ class _RegisterState extends State<Register> {
                         padding: EdgeInsets.symmetric(vertical: 13),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
-                    child: Text(
-                      "Sign Up",
-                      style: TextStyle(
-                          fontFamily: "montserrat semi", fontSize: 15),
-                    )),
+                    child: isLoading
+                        ? CircularProgressIndicator(color: Colors.white)
+                        : Text(
+                            "Sign Up",
+                            style: TextStyle(
+                                fontFamily: "montserrat semi", fontSize: 15),
+                          )),
               ),
               SizedBox(height: 7),
               Center(child: Text("Or", style: TextStyle(color: Colors.grey))),

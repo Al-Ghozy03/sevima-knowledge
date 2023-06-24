@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, deprecated_member_use, sized_box_for_whitespace
 import 'dart:convert';
 
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,6 +9,7 @@ import 'package:sevima_knowledge/api_service.dart';
 import 'package:sevima_knowledge/colors.dart';
 import 'package:sevima_knowledge/screens/register.dart';
 import 'package:sevima_knowledge/widgets/input.dart';
+import 'package:sevima_knowledge/widgets/navbar.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -19,6 +21,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  final storage = GetStorage();
 
   bool isLoading = false;
   Future login() async {
@@ -31,17 +34,16 @@ class _LoginState extends State<Login> {
       body: jsonEncode({"email": email.text, "password": password.text}),
       headers: {"Content-Type": "application/json"},
     );
-    print(res.statusCode);
     if (res.statusCode == 200) {
-    setState(() {
-      isLoading = false;
-    });
-      print(res.body);
+      setState(() {
+        isLoading = false;
+      });
+      storage.write("token", jsonDecode(res.body)["token"]);
+      Get.off(() => Navbar(), transition: Transition.rightToLeftWithFade);
     } else {
-      print(res.body);
-    setState(() {
-      isLoading = false;
-    });
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -108,11 +110,15 @@ class _LoginState extends State<Login> {
                         padding: EdgeInsets.symmetric(vertical: 13),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                          fontFamily: "montserrat semi", fontSize: 15),
-                    )),
+                    child: isLoading
+                        ? CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : Text(
+                            "Login",
+                            style: TextStyle(
+                                fontFamily: "montserrat semi", fontSize: 15),
+                          )),
               ),
               SizedBox(height: 7),
               Center(child: Text("Or", style: TextStyle(color: Colors.grey))),

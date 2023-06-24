@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sevima_knowledge/screens/login.dart';
 import 'package:sevima_knowledge/widgets/navbar.dart';
+import 'package:get_storage/get_storage.dart';
 
-void main() {
+void main()async {
+  await GetStorage.init();
   runApp(const MyApp());
 }
 
