@@ -3,17 +3,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sevima_knowledge/colors.dart';
-import 'package:sevima_knowledge/screens/register.dart';
+import 'package:sevima_knowledge/screens/interest.dart';
 import 'package:sevima_knowledge/widgets/input.dart';
+import 'package:iconsax/iconsax.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class Register extends StatefulWidget {
+  const Register({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Register> createState() => _RegisterState();
 }
 
-class _LoginState extends State<Login> {
+class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     final width = Get.width;
@@ -25,6 +26,7 @@ class _LoginState extends State<Login> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              IconButton(onPressed: ()=>Get.back(), icon: Icon(Iconsax.arrow_left)),
               SizedBox(height: 20),
               Center(
                 child: Column(
@@ -50,23 +52,23 @@ class _LoginState extends State<Login> {
               ),
               SizedBox(height: 13),
               Input(
+                label: "Name",
+                hintText: "John",
+                textInputType: TextInputType.text,
+              ),
+              SizedBox(height: 13),
+              Input(
                 label: "Password",
                 hintText: "Min. 8 characters",
                 textInputType: TextInputType.text,
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      "Forgot Password?",
-                      style: TextStyle(fontSize: 12, color: blueTheme),
-                    )),
-              ),
+              SizedBox(height: 15),
               Container(
                 width: width,
                 child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.to(()=>Interest(),transition: Transition.rightToLeftWithFade);
+                    },
                     style: ElevatedButton.styleFrom(
                         primary: blueTheme,
                         elevation: 0,
@@ -74,7 +76,7 @@ class _LoginState extends State<Login> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                     child: Text(
-                      "Login",
+                      "Sign Up",
                       style: TextStyle(
                           fontFamily: "montserrat semi", fontSize: 15),
                     )),
@@ -112,8 +114,7 @@ class _LoginState extends State<Login> {
               Center(
                 child: TextButton(
                     onPressed: () {
-                      Get.to(() => Register(),
-                          transition: Transition.rightToLeftWithFade);
+                      Get.back();
                     },
                     child: RichText(
                         text: TextSpan(
@@ -122,9 +123,9 @@ class _LoginState extends State<Login> {
                                 color: Colors.black,
                                 fontSize: 12),
                             children: [
-                          TextSpan(text: "Don't have an Account? "),
+                          TextSpan(text: "Already have an Account? "),
                           TextSpan(
-                              text: "Sign up",
+                              text: "Sign in",
                               style: TextStyle(color: blueTheme)),
                         ]))),
               )
